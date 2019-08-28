@@ -255,7 +255,6 @@ void rs::SimulatePair(const Transmitter *trans, Receiver *recv, const World *wor
 
     // Build a pulse
     TransmitterPulse* pulse = new TransmitterPulse();
-    rsDebug::printf(rsDebug::RS_VERY_VERBOSE, "%d\n", pulses);
 
     // Loop throught the pulses
     for (int i = 0; i < pulses; i++) {
