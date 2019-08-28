@@ -1,5 +1,5 @@
 /// rsradarwaveform.h - Classes for different types of radar waveforms
-/// Marc Brooker, 8 June 2006
+/// Marc Brooker, 24 May 2006
 /// Edited by Yaaseen Martin, 27 August 2019
 
 #ifndef __RS_RADARWAVEFORM_H
@@ -16,25 +16,25 @@
 namespace rs {
 
     // Forward Declarations
-    class Signal; //rssignal.h
-    class JonesVector; //rspolarize.h
+    class Signal; // rssignal.h
+    class JonesVector; // rspolarize.h
 
     // Complex type for rendering operations
     typedef std::complex<rsFloat> rsComplex;
 
-    // A continuous wave response interpolation point
+    /// A continuous wave response interpolation point
     struct InterpPoint {
         // Constructor
         InterpPoint(rsFloat power, rsFloat start, rsFloat delay, rsFloat doppler, rsFloat phase, rsFloat noise_temperature);
-        rsFloat power; // Peak power of the pulse (into 1 Ohm resistor)
+        rsFloat power; // Peak power of the pulse (into 1ohm)
         rsFloat time; // Start time (seconds)
         rsFloat delay; // Pulse round trip time (seconds)
         rsFloat doppler; // Doppler shift (radians)
         rsFloat phase; // Phase (radians)
-        rsFloat noise_temperature; // Noise temperature (Kelvin)
+        rsFloat noise_temperature; // Noise temperature (kelvin)
     };
 
-    // RadarWaveform class stores information about a pulse shape (or continuous wave wave)
+    /// The RadarWaveform class stores information about a pulse shape (or continuous wave wave)
     class RadarSignal: public boost::noncopyable
     {
         public:
@@ -82,10 +82,12 @@ namespace rs {
 
 }
 
-/// Functions for creating radar waveforms
+// Functions for creating radar waveforms
 namespace rsPulseFactory {
+
     // Load a pulse from a file
     rs::RadarSignal* LoadPulseFromFile(const std::string& name, const std::string& filename, rsFloat power, rsFloat carrierfreq);
+
 }
 
 #endif
