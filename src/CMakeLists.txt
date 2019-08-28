@@ -5,7 +5,6 @@ INCLUDE_DIRECTORIES( ${fers_SOURCE_DIR}/fftwcpp )
 ########### next target ###############
 
 SET(fers_SRCS
-   rstest.cpp
    rsdebug.cpp
    rsmain.cpp
    rsplatform.cpp
@@ -34,7 +33,6 @@ SET(fers_SRCS
    rsmultipath.cpp
    rspattern.cpp
    rspolarize.cpp
-   rstest.h
    rsdebug.h
    rspath.h
    rsportable.h
