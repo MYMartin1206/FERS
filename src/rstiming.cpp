@@ -158,24 +158,23 @@ void ClockModelTiming::InitializeModel(const PrototypeTiming *timing)
     if (!alphas.empty())
         throw std::logic_error("[BUG] ClockModelTiming::InitializeModel called more than once");
 
-    //Copy the alpha and weight vectors
+    // Copy the alpha and weight vectors
     timing->GetAlphas(alphas, weights);
-    rsDebug::printf(rsDebug::RS_VERY_VERBOSE, "%d\n", alphas.size());
 
-    //Create the generator
+    // Create the generator
     model = new ClockModelGenerator(alphas, weights, timing->GetFrequency(), timing->GetPhaseOffset(), timing->GetFreqOffset(), 15);
 
-    //Warn if frequency is not set
+    // Warn if frequency is not set
     if (timing->GetFrequency() == 0.0)
         rsDebug::printf(rsDebug::RS_IMPORTANT, "[Important] Timing source frequency not set, results could be incorrect.");
 
-    //Get the carrier frequency
+    // Get the carrier frequency
     frequency = timing->GetFrequency();
 
     // Get the sync on pulse flag
     synconpulse = timing->GetSyncOnPulse();
 
-    //Enable the model
+    // Enable the model
     enabled = true;
 
 }
