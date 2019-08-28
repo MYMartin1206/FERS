@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SOARS" />
+		<Option execution_dir="C:/Users/mrtmo/Desktop/UCT/PhD/Code/FERS/CodeBlocks/SOARS/" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/SOARS" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/SOARS" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="CMakeLists.txt" />
+		<Unit filename="rsantenna.cpp" />
+		<Unit filename="rsantenna.h" />
+		<Unit filename="rsdebug.cpp" />
+		<Unit filename="rsdebug.h" />
+		<Unit filename="rsdsp.cpp" />
+		<Unit filename="rsdsp.h" />
+		<Unit filename="rsgeometry.cpp" />
+		<Unit filename="rsgeometry.h" />
+		<Unit filename="rshdf5.cpp" />
+		<Unit filename="rshdf5.h" />
+		<Unit filename="rsinterp.cpp" />
+		<Unit filename="rsinterp.h" />
+		<Unit filename="rsmain.cpp" />
+		<Unit filename="rsmultipath.cpp" />
+		<Unit filename="rsmultipath.h" />
+		<Unit filename="rsnoise.cpp" />
+		<Unit filename="rsnoise.h" />
+		<Unit filename="rsobject.cpp" />
+		<Unit filename="rsobject.h" />
+		<Unit filename="rsparameters.cpp" />
+		<Unit filename="rsparameters.h" />
+		<Unit filename="rspath.cpp" />
+		<Unit filename="rspath.h" />
+		<Unit filename="rspattern.cpp" />
+		<Unit filename="rspattern.h" />
+		<Unit filename="rsplatform.cpp" />
+		<Unit filename="rsplatform.h" />
+		<Unit filename="rspolarize.cpp" />
+		<Unit filename="rspolarize.h" />
+		<Unit filename="rsportable.cpp" />
+		<Unit filename="rsportable.h" />
+		<Unit filename="rspulserender.cpp" />
+		<Unit filename="rspulserender.h" />
+		<Unit filename="rspython.cpp" />
+		<Unit filename="rspython.h" />
+		<Unit filename="rsradar.cpp" />
+		<Unit filename="rsradar.h" />
+		<Unit filename="rsradarwaveform.cpp" />
+		<Unit filename="rsradarwaveform.h" />
+		<Unit filename="rsresponse.cpp" />
+		<Unit filename="rsresponse.h" />
+		<Unit filename="rssignal.cpp" />
+		<Unit filename="rssignal.h" />
+		<Unit filename="rssim.cpp" />
+		<Unit filename="rssim.h" />
+		<Unit filename="rstarget.cpp" />
+		<Unit filename="rstarget.h" />
+		<Unit filename="rstest.cpp" />
+		<Unit filename="rstest.h" />
+		<Unit filename="rsthreadedsim.cpp" />
+		<Unit filename="rsthreadedsim.h" />
+		<Unit filename="rstiming.cpp" />
+		<Unit filename="rstiming.h" />
+		<Unit filename="rsworld.cpp" />
+		<Unit filename="rsworld.h" />
+		<Unit filename="xmlimport.cpp" />
+		<Unit filename="xmlimport.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
