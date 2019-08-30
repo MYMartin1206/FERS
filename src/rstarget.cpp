@@ -1,6 +1,6 @@
-//rstarget.cpp - Classes for targets and target RCS
-//Marc Brooker mbrooker@rrsg.ee.uct.ac.za
-//11 June 2007
+/// rstarget.cpp - Classes for targets and target RCS
+/// Marc Brooker, 11 June 2007
+/// Edited by Yaaseen Martin, 30 August 2019
 
 #define TIXML_USE_STL // Tell tinyxml to use the STL instead of its own string class
 
