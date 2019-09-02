@@ -1,6 +1,6 @@
 /// rssim.cpp - Functions which perform the actual simulations
 /// Marc Brooker, 30 May 2006
-/// Edited by Yaaseen Martin, 27 August 2019
+/// Edited by Yaaseen Martin, 02 September 2019
 
 #include <cmath>
 #include <limits>
@@ -19,7 +19,7 @@ using namespace rs;
 
 namespace {
 
-    // Results of solving the bistatic radar equation and friends
+    /// Results of solving the bistatic radar equation and friends
     struct REResults {
         rsFloat power;
         rsFloat delay;
@@ -28,11 +28,11 @@ namespace {
         rsFloat noise_temperature;
     };
 
-    // Class for range errors in RE calculations
+    /// Class for range errors in RE calculations
     class RangeError {
     };
 
-    // Solve the radar equation for a given set of parameters
+    /// Solve the radar equation for a given set of parameters
     void SolveRE(const Transmitter *trans, const Receiver *recv, const Target *targ, rsFloat time, rsFloat length, RadarSignal *wave, REResults &results)
     {
         // Get the positions in space of the three objects
@@ -67,16 +67,16 @@ namespace {
         rsFloat Gt = trans->GetGain(transvec, trans->GetRotation(time), Wl);
         rsFloat Gr = recv->GetGain(recvvec, recv->GetRotation(results.delay+time), Wl);
 
-        // Step 2: Calculate the received power using the narrowband bistatic radar equation; see "Bistatic Narrowband Radar Equation" in doc/equations/equations.tex
+        // Step 2: Calculate the received power using the narrowband bistatic radar equation; see "Bistatic Narrowband radar equation" in doc/equations/equations.tex
         results.power = Gt*Gr*RCS/(4*M_PI);
         if (!recv->CheckFlag(Receiver::FLAG_NOPROPLOSS))
             results.power *= (Wl*Wl)/(pow(4*M_PI, 2)*Rt*Rt*Rr*Rr);
 
-        // If the transmitter and/or receiver are multipath duals, multiply by the loss factor
+        // If the transmitter and/or receiver are multipath duals, multiply by the loss factor; none, one, or both of Tx/Rx can "observe" a reflection
         if (trans->IsMultipathDual())
-            results.power *= trans->MultipathDualFactor();
+            results.power *= trans->MultipathDualFactor(); // If the transmitter is a dual, account for one reflection
         if (recv->IsMultipathDual())
-            results.power *= trans->MultipathDualFactor();
+            results.power *= recv->MultipathDualFactor(); // If the receiver is a dual, account for one reflection
 
         // Step 3: Calculate phase shift; see "Phase Delay Equation" in doc/equations/equations.tex
         results.phase = -results.delay*2*M_PI*wave->GetCarrier();
@@ -103,7 +103,7 @@ namespace {
         results.noise_temperature = recv->GetNoiseTemperature(recv->GetRotation(time+results.delay));
     }
 
-    // Perform the first stage of CW simulation calculations for the specified pulse and target
+    /// Perform the first stage of simulation calculations for the specified pulse and target
     void SimulateTarget(const Transmitter *trans, Receiver *recv, const Target *targ, const World *world, const TransmitterPulse *signal)
     {
 
@@ -141,7 +141,7 @@ namespace {
         recv->AddResponse(response);
     }
 
-    /// Solve the Radar Equation and friends (doppler, phase, delay) for direct transmission
+    /// Solve the radar equation and friends (doppler, phase, delay) for direct transmission
     void SolveREDirect(const Transmitter *trans, const Receiver *recv, rsFloat time, rsFloat length, const RadarSignal *wave, REResults &results)
     {
         // Calculate the vectors to and from the transmitter
@@ -185,11 +185,10 @@ namespace {
             rsFloat vdoppler = (R_end-R)/length;
             results.doppler = (rsParameters::c()+vdoppler)/(rsParameters::c()-vdoppler);
 
-            // For the moment, direct paths are not handled for multipath duals
+            // Receiver duals do not receive any direct transmissions
+            // However, real receivers can receive direct transmissions from a transmitter dual
             if (trans->IsMultipathDual())
-                results.power = 0;
-            if (recv->IsMultipathDual())
-                results.power = 0;
+                results.power *= trans->MultipathDualFactor();
 
             // Step 4: Calculate phase shift
             results.phase = fmod(results.delay*2*M_PI*wave->GetCarrier(), 2*M_PI);
@@ -203,7 +202,7 @@ namespace {
         }
     }
 
-    /// Model the pulse which is received directly by a receiver from a CW transmitter
+    /// Model the pulse which is received directly by a receiver from a transmitter
     void AddDirect(const Transmitter *trans, Receiver *recv, const World *world, const TransmitterPulse *signal)
     {
         // If receiver and transmitter share the same antenna - there can't be a direct pulse
@@ -246,7 +245,7 @@ namespace {
 
 }
 
-// Simulate a transmitter-receiver pair with a pulsed transmission
+/// Simulate a transmitter-receiver pair with a pulsed transmission
 void rs::SimulatePair(const Transmitter *trans, Receiver *recv, const World *world)
 {
     // Get the number of pulses
@@ -256,7 +255,7 @@ void rs::SimulatePair(const Transmitter *trans, Receiver *recv, const World *wor
     // Build a pulse
     TransmitterPulse* pulse = new TransmitterPulse();
 
-    // Loop throught the pulses
+    // Loop through the pulses
     for (int i = 0; i < pulses; i++) {
         trans->GetPulse(pulse, i);
         for (targ = world->targets.begin(); targ != world->targets.end(); targ++) {

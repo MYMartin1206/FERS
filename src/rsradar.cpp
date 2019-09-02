@@ -1,6 +1,6 @@
 /// rsradar.cpp - Implementation of classes defined in rsradar.h
 /// Marc Brooker, 21 April 2006
-/// Edited by Yaaseen Martin, 27 August 2019
+/// Edited by Yaaseen Martin, 02 September 2019
 
 #include <algorithm>
 #include <stdexcept>
@@ -92,13 +92,13 @@ Timing* Radar::GetTiming() const
     return timing;
 }
 
-// Is this object a virtual multipath dual?
+// Check if object is a virtual multipath dual
 bool Radar::IsMultipathDual() const
 {
     return multipath_dual;
 }
 
-// Set this object as a virtual multipath dual
+// Set object as a virtual multipath dual
 void Radar::SetMultipathDual(rsFloat reflect)
 {
     multipath_dual = true;
@@ -106,7 +106,7 @@ void Radar::SetMultipathDual(rsFloat reflect)
 
     // Sanity check the reflectance factor
     if (multipath_reflect > 1)
-        rsDebug::printf(rsDebug::RS_CRITICAL, "[CRITICAL] Multipath reflection factor greater than 1 (=%g) for radar %s, results are likely to be incorrect\n", reflect, GetName().c_str());
+        rsDebug::printf(rsDebug::RS_CRITICAL, "Multipath reflection factor greater than 1 (=%g) for radar %s, results are likely to be incorrect\n", reflect, GetName().c_str());
 }
 
 // Get the reflecting factor
@@ -341,7 +341,7 @@ bool Receiver::CheckFlag(RecvFlag flag) const
 // Create a multipath dual of the given receiver
 Receiver* rs::CreateMultipathDual(Receiver *recv, const MultipathSurface *surf)
 {
-    //If we already have a dual, simply return the pointer to it
+    // If we already have a dual, simply return the pointer to it
     if (recv->dual)
         return recv->dual;
 

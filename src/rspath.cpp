@@ -1,6 +1,6 @@
 /// rspath.cpp - Implementation of rotation and position path classes
 /// Marc Brooker, 21 April 2006
-/// Edited by Yaaseen Martin, 27 August 2019
+/// Edited by Yaaseen Martin, 02 September 2019
 
 #include <cmath> // For fmod
 #include <algorithm>
@@ -203,7 +203,7 @@ Path* rs::ReflectPath(const Path *path, const MultipathSurface *surf)
 {
     // Do not support multipath on Python paths for now
     if (path->pythonpath)
-        throw std::runtime_error("[ERROR] Multipath surfaces are not currently supported for Python paths");
+        throw std::runtime_error("ERROR: Multipath surfaces are not currently supported for Python paths");
 
     // Create a new path object
     Path* dual = new Path(path->type);

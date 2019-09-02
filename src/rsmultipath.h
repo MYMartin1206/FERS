@@ -1,6 +1,6 @@
 /// rsmultipath.h - Classes and definitions for multipath propagation
 /// Marc Brooker, 25 April 2006
-/// Edited by Yaaseen Martin, 27 August 2019
+/// Edited by Yaaseen Martin, 02 September 2019
 
 #ifndef __RS_MULTIPATH_H
 #define __RS_MULTIPATH_H
@@ -20,7 +20,7 @@ namespace rs {
             ~MultipathSurface();
 
             // Reflect a point in the surface
-            Vec3 ReflectPoint(const Vec3 &b) const;
+            Vec3 ReflectPoint(const Vec3 &r) const;
 
             // Get the reflectance factor
             rsFloat GetFactor() const;

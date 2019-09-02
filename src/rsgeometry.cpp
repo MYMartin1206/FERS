@@ -1,9 +1,8 @@
 /// rsgeometry.cpp - Implementation of geometry classes
 /// Marc Brooker, 26 May 2006
-/// Edited by Yaaseen Martin, 27 August 2019
+/// Edited by Yaaseen Martin, 02 September 2019
 
 #include <cmath>
-
 #include "rsgeometry.h"
 #include "rsdebug.h"
 

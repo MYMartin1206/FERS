@@ -1,6 +1,6 @@
 /// rsworld.cpp - Implementation of simulator world object
 /// Marc Brooker, 25 April 2006
-/// Edited by Yaaseen Martin, 27 August 2019
+/// Edited by Yaaseen Martin, 02 September 2019
 #include <algorithm>
 #include "rsdebug.h"
 #include "rsworld.h"
@@ -136,7 +136,7 @@ void World::ProcessMultipath()
   // A "dual" has the same properties of the transmitter and receiver, but is reflected in the multipath plane
   if (multipath_surface) {
 
-    // Add duals for each plaform
+    // Add duals for each platform
     std::vector<Platform*>::iterator plat = platforms.begin();
     std::vector<Platform*>::iterator plat_end = platforms.end();
     for (; plat != plat_end; plat++)
