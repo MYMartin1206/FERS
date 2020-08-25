@@ -1,6 +1,6 @@
 /// rssim.cpp - Functions which perform the actual simulations
 /// Marc Brooker, 30 May 2006
-/// Edited by Yaaseen Martin, 02 September 2019
+/// Edited by Yaaseen Martin, 25 August 2020
 
 #include <cmath>
 #include <limits>
@@ -31,14 +31,39 @@ namespace {
     /// Class for range errors in RE calculations
     class RangeError {
     };
+    
+    // Function to calculate angles in a 3-D triangle
+    void get_tri_angles(Vec3 P1, Vec3 P2, Vec3 P3, rsFloat* tri_angles)
+    {
+        Vec3 a = P3-P1;
+        Vec3 b = P2-P1;
+        rsFloat d = DotProduct(a,b);
+        rsFloat theta1 = acos(d/(a.Length()*b.Length())); // Angle P3-to-P1-to-P2
+
+        a = P1-P2;
+        b = P3-P2;
+        d = DotProduct(a,b);
+        rsFloat theta2 = acos(d/(a.Length()*b.Length())); // Angle P1-to-P2-to-P3
+
+        a = P1-P3;
+        b = P2-P3;
+        d = DotProduct(a,b);
+        rsFloat theta3 = acos(d/(a.Length()*b.Length())); // Angle P2-to-P3-to-P1
+
+        // Return the angles in the order of input points
+        tri_angles[0] = theta1;
+        tri_angles[1] = theta2;
+        tri_angles[2] = theta3;
+    }
 
     /// Solve the radar equation for a given set of parameters
     void SolveRE(const Transmitter *trans, const Receiver *recv, const Target *targ, rsFloat time, rsFloat length, RadarSignal *wave, REResults &results)
     {
         // Get the positions in space of the three objects
-        Vec3 trpos = trans->GetPosition(time);
-        Vec3 repos = recv->GetPosition(time);
-        Vec3 tapos = targ->GetPosition(time);
+        Vec3 trpos = trans->GetPosition(time);  // Tx
+        Vec3 repos = recv->GetPosition(time);   // Rx
+        Vec3 tapos = targ->GetPosition(time);   // Target initial position
+        Vec3 tapos_end = targ->GetPosition(time+length);  // Target next position
         SVec3 transvec = SVec3(tapos-trpos);
         SVec3 recvvec = SVec3(tapos-repos);
 
@@ -82,22 +107,33 @@ namespace {
         results.phase = -results.delay*2*M_PI*wave->GetCarrier();
 
         // Step 4: Calculate doppler shift; calculate positions at the end of the pulse
-        Vec3 trpos_end = trans->GetPosition(time+length);
-        Vec3 repos_end = recv->GetPosition(time+length);
-        Vec3 tapos_end = targ->GetPosition(time+length);
-        SVec3 transvec_end = SVec3(tapos_end-trpos_end);
-        SVec3 recvvec_end = SVec3(tapos_end-repos_end);
-        rsFloat Rt_end = transvec_end.length;
-        rsFloat Rr_end = recvvec_end.length;
+        // Get Beta angle
+        rsFloat Bistatic_angles[3];
+        get_tri_angles(trpos, tapos, repos, Bistatic_angles);  // Angles from Tx, to tapos, to Rx
+        rsFloat Beta = Bistatic_angles[1]; // Beta angle in bistatic triangle [rad]
 
-        // Sanity-check Rt_end and Rr_end and throw an exception if they are too small
-        if ((Rt_end < std::numeric_limits<rsFloat>::epsilon()) || (Rr_end < std::numeric_limits<rsFloat>::epsilon()))
-            throw std::runtime_error("Target is too close to transmitter or receiver for accurate simulation");
+        // Get tapos_end projected onto the bistatic plane (i.e. next target coordinates)
+        Vec3 normal = CrossProduct(tapos - trpos, tapos - repos);  // Returns a, b, c for plane
+        normal = normal/normal.Length(); // Unit vector of plane normal
+        Vec3 tapos_end_proj = tapos_end - normal*DotProduct((tapos_end - tapos), normal); // Project tapos_end onto the bistatic plane
+        // (See: https://stackoverflow.com/questions/9605556/how-to-project-a-point-onto-a-plane-in-3d)
 
-        // Doppler shift equation; see "Bistatic Doppler Equation" in doc/equations/equations.tex
-        rsFloat V_r = (Rr_end-Rr)/length;
-        rsFloat V_t = (Rt_end-Rt)/length;
-        results.doppler = std::sqrt((1+V_r/rsParameters::c())/(1-V_r/rsParameters::c()))*std::sqrt((1+V_t/rsParameters::c())/(1-V_t/rsParameters::c()));
+        // Get delta using bistatic bisector and projected tapos_end
+        Vec3 TxT0 = trpos - tapos;	// Shift Tx to tapos as the origin
+        Vec3 RxT0 = repos - tapos;	// Shift Rx to tapos as the origin
+        TxT0 = TxT0/TxT0.Length(); // Normalise to unit vector
+        RxT0 = RxT0/RxT0.Length(); // Normalise to unit vector
+        Vec3 Bisector = (TxT0 + RxT0) + tapos;  // Add normalised vectors (resultant is the bisecting vector), then shift result back by tapos
+        rsFloat Delta_angles[3];
+        get_tri_angles(Bisector, tapos, tapos_end_proj, Delta_angles); // To get delta
+        rsFloat Delta = Delta_angles[1];  // Delta angle [rad]; if |Delta| > pi/2 rad, Fd will be negative (i.e. target moving away from radar)
+
+        // Get Fd based on the velocity component projected onto the bistatic plane
+        rsFloat Lambda = c/carrier; // Wavelength [m]
+        rsFloat V_proj = (tapos_end_proj - tapos).Length()/length;  // Target velocity vector projected onto the bistatic plane
+        rsFloat V_radial = V_proj*cos(Delta)*cos(Beta/2);	// Now project the V_proj onto the bistatic bisector, i.e. get radial velocity
+        //results[i].doppler = 2*V_radial/Lambda; // Calculates Fd using the geometry
+        results[i].doppler = carrier*(((1 + V_radial/c)/(1 - V_radial/c)) - 1);  // Calculates Fd using Doppler effect equation; Fd = Fr - Fc; technically more accurate?
 
         // Step 5: Calculate system noise temperature; only use the receive antenna noise temperature for now
         results.noise_temperature = recv->GetNoiseTemperature(recv->GetRotation(time+results.delay));
